@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Result Portal - IET Lucknow</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .wrapper {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header img {
+            height: 80px;
+            width: 80px;
+        }
+
+        .header h3 {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 12px;
+            color: #666;
+            margin: 5px 0;
+        }
+
+        .header-note {
+            font-size: 12px;
+            color: red;
+            margin-top: 10px;
+        }
+
+        /* Hide written header text per request; keep logo image visible */
+        .title-text {
+            display: none;
+        }
+        .logo-caption {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #222;
+        }
+
+        .header-note a {
+            color: red;
+            text-decoration: none;
+        }
+
+        .header-note a:hover {
+            text-decoration: underline;
+        }
+
+        .form-container {
+            max-width: 500px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .form-group select,
+        .form-group input[type="text"],
+        .form-group input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+
+        .captcha-group {
+            margin-bottom: 15px;
+        }
+
+        .captcha-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .captcha-row img {
+            border: 1px solid #ccc;
+            height: 40px;
+            width: auto;
+        }
+
+        .captcha-row button {
+            padding: 8px 15px;
+            background-color: white;
+            border: 1px solid #0066cc;
+            color: #0066cc;
+            cursor: pointer;
+            font-size: 12px;
+            border-radius: 3px;
+        }
+
+        .captcha-row button:hover {
+            background-color: #f0f0f0;
+        }
+
+        .captcha-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+
+        .button-group {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .button-group button {
+            padding: 10px 30px;
+            margin: 0 10px;
+            background-color: #0099cc;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .button-group button:hover {
+            background-color: #0077aa;
+        }
+
+        .button-group button:active {
+            background-color: #005588;
+        }
+
+        .results-container {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .results-container.show {
+            display: block;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 15px;
+        }
+
+        .result-header h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .student-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .student-info-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .student-info-row span:first-child {
+            font-weight: bold;
+            min-width: 120px;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+
+        .results-table th,
+        .results-table td {
+            border: 1px solid #999;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .results-table th {
+            background-color: #e6e6e6;
+            font-weight: bold;
+        }
+
+        .results-table td:first-child,
+        .results-table th:first-child {
+            text-align: left;
+        }
+
+        .summary-info {
+            font-size: 13px;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .summary-info span:first-child {
+            font-weight: bold;
+            min-width: 150px;
+            display: inline-block;
+        }
+
+        .note {
+            font-size: 11px;
+            color: #555;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+            line-height: 1.5;
+        }
+
+        .error-message {
+            color: red;
+            text-align: center;
+            margin: 15px 0;
+            display: none;
+            padding: 10px;
+            background-color: #ffe6e6;
+            border: 1px solid #ff0000;
+            border-radius: 3px;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .success-message {
+            color: green;
+            text-align: center;
+            margin: 15px 0;
+            display: none;
+            padding: 10px;
+            background-color: #e6ffe6;
+            border: 1px solid #00cc00;
+            border-radius: 3px;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        @media print {
+            .form-container,
+            .button-group,
+            .header-note {
+                display: none;
+            }
+
+            .wrapper {
+                padding: 0;
+                box-shadow: none;
+            }
+
+            body {
+                padding: 0;
+                background-color: white;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .header img {
+                height: 60px;
+                width: 60px;
+            }
+
+            .student-info {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group button {
+                display: block;
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <!-- IET Lucknow Logo -->
+        <div style="text-align: center; padding: 20px 0; margin-bottom: 20px;">
+            <img src="./aktttu.png" alt="AKTTTU Logo" style="height: 100px; width: 100px;">
+            <div class="logo-caption">Institute of Engineering &amp; Technology, Lucknow</div>
+        </div>
+        
+        <!-- Header -->
+        <div class="header">
+            <div class="title-text">
+                <h1>
+                    Institute of Engineering & Technology, Lucknow
+                </h1>
+                <h3>अभियांत्रिकी एवं प्रौद्योगिकी संस्थान, लखनऊ</h3>
+                <p>(An Autonomous Constituent Institute of Dr. A.P.J. Abdul Kalam Technical University, U.P., Lucknow)</p>
+                <p><strong>Email:</strong> coe@ietlucknow.ac.in</p>
+                <div class="header-note">
+                    Note- For Old Results (Up to December, 2020) visit <a href="http://result.ietlucknow.ac.in/" target="_blank">Old Results Portal</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Section -->
+        <div class="form-container">
+            <h2>Semester 2 Result</h2>
+            <form id="resultForm">
+                <div class="form-group">
+                    <label for="type">Type</label>
+                    <select id="type" name="type" required>
+                        <option value="">--Select--</option>
+                        <option value="R">Regular</option>
+                        <option value="Carry">Carry</option>
+                        <option value="EX">EX- Student</option>
+                        <option value="SCARRY">Spl CARRY</option>
+                        <option value="CH">Challenge Evaluation</option>
+                        <option value="RE">Re-Evaluation</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="session">Session</label>
+                    <select id="session" name="session" required>
+                        <option value="">--Select--</option>
+                        <option value="2018-2019">2018-2019</option>
+                        <option value="2019-2020">2019-2020</option>
+                        <option value="2020-2021">2020-2021</option>
+                        <option value="2021-2022">2021-2022</option>
+                        <option value="2022-2023">2022-2023</option>
+                        <option value="2023-2024">2023-2024</option>
+                        <option value="2024-2025">2024-2025</option>
+                        <option value="2025-2026">2025-2026</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="semester">Semester</label>
+                    <select id="semester" name="semester" required>
+                        <option value="0">--All--</option>
+                        <option value="1">First Semester</option>
+                        <option value="2">Second Semester</option>
+                        <option value="3">Third Semester</option>
+                        <option value="4">Fourth Semester</option>
+                        <option value="5">Fifth Semester</option>
+                        <option value="6">Sixth Semester</option>
+                        <option value="7">Seventh Semester</option>
+                        <option value="8">Eighth Semester</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="rollNo">Roll No</label>
+                    <input type="text" id="rollNo" name="rollNo" placeholder="Enter Roll No" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="dob">Date of Birth (dd/MM/yyyy)</label>
+                    <input type="text" id="dob" name="dob" placeholder="dd/mm/yyyy" maxlength="10" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter Password" required>
+                </div>
+
+                <div class="captcha-group">
+                    <label>Captcha Verification</label>
+                    <div class="captcha-row">
+                        <img id="captchaImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60'%3E%3Crect fill='%23f0f0f0' width='200' height='60'/%3E%3Ctext x='100' y='40' font-size='30' fill='%23333' text-anchor='middle' font-family='monospace' font-weight='bold'%3E8313%3C/text%3E%3C/svg%3E" alt="Captcha">
+                        <button type="button" id="refreshBtn">Get Other Number</button>
+                    </div>
+                    <input type="text" id="captcha" name="captcha" class="captcha-input" placeholder="Enter Captcha Digits" required>
+                </div>
+
+                <div class="error-message" id="errorMsg"></div>
+                <div class="success-message" id="successMsg"></div>
+
+                <div class="button-group">
+                    <button type="submit" id="submitBtn">Submit</button>
+                    <button type="button" id="printBtn">Print</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-container" id="resultsContainer">
+            <div class="result-header">
+                <h3>Semester 2 Result</h3>
+                <div class="summary-info">
+                    <span>Session:</span> <span id="resultSession">2025-2026</span>
+                </div>
+            </div>
+
+            <div class="student-info">
+                <div class="student-info-row">
+                    <span>Name of Student:</span>
+                    <span id="studentName">--</span>
+                </div>
+                <div class="student-info-row">
+                    <span>Father's Name:</span>
+                    <span id="fatherName">--</span>
+                </div>
+                <div class="student-info-row">
+                    <span>Roll No:</span>
+                    <span id="resultRollNo">--</span>
+                </div>
+                <div class="student-info-row">
+                    <span>Status:</span>
+                    <span id="status">--</span>
+                </div>
+                <div class="student-info-row">
+                    <span>Course:</span>
+                    <span id="course">--</span>
+                </div>
+                <div class="student-info-row">
+                    <span>Semester:</span>
+                    <span id="resultSemester">--</span>
+                </div>
+            </div>
+
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>Subject Code</th>
+                        <th>ESE Theory</th>
+                        <th>ESE Practical</th>
+                        <th>Sessional Theory</th>
+                        <th>Sessional Practical</th>
+                        <th>Grade</th>
+                        <th>Obtained Credit</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsTableBody">
+                    <tr>
+                        <td>IVA251</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td>81</td>
+                        <td>A</td>
+                        <td>0.00</td>
+                    </tr>
+                    <tr>
+                        <td>IAS201</td>
+                        <td>32</td>
+                        <td>--</td>
+                        <td>15</td>
+                        <td>--</td>
+                        <td>c</td>
+                        <td>3.00</td>
+                    </tr>
+                    <tr>
+                        <td>IAS203</td>
+                        <td>31</td>
+                        <td>--</td>
+                        <td>19</td>
+                        <td>--</td>
+                        <td>C</td>
+                        <td>2.00</td>
+                    </tr>
+                    <tr>
+                        <td>IAS204</td>
+                        <td>33</td>
+                        <td>--</td>
+                        <td>20</td>
+                        <td>--</td>
+                        <td>C</td>
+                        <td>3.00</td>
+                    </tr>
+                    <tr>
+                        <td>IAS251</td>
+                        <td>--</td>
+                        <td>36</td>
+                        <td>--</td>
+                        <td>32</td>
+                        <td>B</td>
+                        <td>1.00</td>
+                    </tr>
+                    <tr>
+                        <td>ICE251</td>
+                        <td>--</td>
+                        <td>25</td>
+                        <td>--</td>
+                        <td>35</td>
+                        <td>B</td>
+                        <td>2.00</td>
+                    </tr>
+                    <tr>
+                        <td>ICS201</td>
+                        <td>37</td>
+                        <td>--</td>
+                        <td>17</td>
+                        <td>--</td>
+                        <td>C</td>
+                        <td>3.00</td>
+                    </tr>
+                    <tr>
+                        <td>ICS251</td>
+                        <td>--</td>
+                        <td>38</td>
+                        <td>--</td>
+                        <td>41</td>
+                        <td>B+</td>
+                        <td>1.00</td>
+                    </tr>
+                    <tr>
+                        <td>IEE201</td>
+                        <td>34</td>
+                        <td>--</td>
+                        <td>10</td>
+                        <td>--</td>
+                        <td>D</td>
+                        <td>3.00</td>
+                    </tr>
+                    <tr>
+                        <td>IEE251</td>
+                        <td>--</td>
+                        <td>40</td>
+                        <td>--</td>
+                        <td>40</td>
+                        <td>A</td>
+                        <td>1.00</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="summary-info">
+                <span>Carry Over Papers:</span> <span id="carryPapers">none</span>
+            </div>
+
+            <div class="summary-info">
+                <span>SGPA:</span> <span id="sgpa">5.69</span>
+            </div>
+
+            <div class="summary-info">
+                <span>Result:</span> <span id="result">CP(0)</span>
+            </div>
+
+            <div class="summary-info">
+                <span>Date of Declaration:</span> <span id="dateOfDeclaration">25/01/2026</span>
+            </div>
+
+            <div class="note">
+                <strong>Legend:</strong> CP(0): PROMOTED WITHOUT CARRY PAPER, CP(N): PROMOTED WITH 'N' CARRY PAPER, CL: CLEARED, NCL: NOT CLEARED, PWG: PASSED WITH GRACE, PCP: PROMOTED WITH CARRY PAPER
+                <br><br>
+                <strong>Note:</strong> Institute does not own for the errors or omissions, if any, in this statement.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentCaptcha = Math.floor(Math.random() * 9000) + 1000;
+        
+        // Update captcha on page load
+        updateCaptchaDisplay();
+
+        function updateCaptchaDisplay() {
+            document.getElementById('captchaImg').src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60'%3E%3Crect fill='%23f0f0f0' width='200' height='60'/%3E%3Ctext x='100' y='40' font-size='30' fill='%23333' text-anchor='middle' font-family='monospace' font-weight='bold'%3E${currentCaptcha}%3C/text%3E%3C/svg%3E`;
+            document.getElementById('captcha').value = '';
+        }
+
+        // Form submission
+        document.getElementById('resultForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const type = document.getElementById('type').value.trim();
+            const session = document.getElementById('session').value.trim();
+            const semester = document.getElementById('semester').value.trim();
+            const rollNo = document.getElementById('rollNo').value.trim();
+            const dob = document.getElementById('dob').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const captcha = document.getElementById('captcha').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+            const successMsg = document.getElementById('successMsg');
+
+            errorMsg.classList.remove('show');
+            successMsg.classList.remove('show');
+
+            // Validation
+            if (!type) {
+                errorMsg.textContent = 'Please select Type';
+                errorMsg.classList.add('show');
+                return;
+            }
+
+            if (!session) {
+                errorMsg.textContent = 'Please select Session';
+                errorMsg.classList.add('show');
+                return;
+            }
+
+            if (!rollNo) {
+                errorMsg.textContent = 'Please enter Roll No';
+                errorMsg.classList.add('show');
+                return;
+            }
+
+            if (!dob) {
+                errorMsg.textContent = 'Please enter Date of Birth';
+                errorMsg.classList.add('show');
+                return;
+            }
+
+            if (!/^[0-3]\d\/[0-1]\d\/[0-9]{4}$/.test(dob)) {
+                errorMsg.textContent = 'Invalid date format. Use dd/MM/yyyy';
+                errorMsg.classList.add('show');
+                return;
+            }
+
+            if (!password) {
+                errorMsg.textContent = 'Please enter Password';
+                errorMsg.classList.add('show');
+                return;
+            }
+
+            if (password !== 'abhi08642') {
+                errorMsg.textContent = 'Incorrect credentials. Please try again.';
+                errorMsg.classList.add('show');
+                return;
+            }
+
+            if (!captcha) {
+                errorMsg.textContent = 'Please enter Captcha';
+                errorMsg.classList.add('show');
+                return;
+            }
+
+            if (captcha !== currentCaptcha.toString()) {
+                currentCaptcha = Math.floor(Math.random() * 9000) + 1000;
+                updateCaptchaDisplay();
+                errorMsg.textContent = 'Invalid Captcha. New captcha generated. Please try again.';
+                errorMsg.classList.add('show');
+                return;
+            }
+
+            // Validate specific conditions for result
+            const validSemesters = ['1', '2'];
+            if (type !== 'R' || session !== '2025-2026' || !validSemesters.includes(semester) || rollNo !== '2500520100001' || dob !== '25/09/2006') {
+                errorMsg.textContent = 'No records found for the given details.';
+                errorMsg.classList.add('show');
+                return;
+            }
+
+            // Show results
+            document.getElementById('resultsContainer').classList.add('show');
+            successMsg.textContent = 'Result loaded successfully!';
+            successMsg.classList.add('show');
+            document.getElementById('studentName').textContent = 'Abhinav';
+            document.getElementById('fatherName').textContent = 'Gyan Shanker';
+            document.getElementById('course').textContent = 'Btech';
+            document.getElementById('resultRollNo').textContent = rollNo;
+            document.getElementById('resultSession').textContent = session;
+            document.getElementById('resultSemester').textContent = '2';
+            document.getElementById('status').textContent = 'Regular';
+
+            // Scroll to results
+            setTimeout(() => {
+                document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        });
+
+        // Print functionality
+        document.getElementById('printBtn').addEventListener('click', function() {
+            const resultsContainer = document.getElementById('resultsContainer');
+            if (!resultsContainer.classList.contains('show')) {
+                alert('Please submit the form first to view results');
+                return;
+            }
+            window.print();
+        });
+
+        // Refresh captcha
+        document.getElementById('refreshBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            currentCaptcha = Math.floor(Math.random() * 9000) + 1000;
+            updateCaptchaDisplay();
+        });
+    </script>
+</body>
+</html>
